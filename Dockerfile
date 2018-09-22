@@ -9,4 +9,5 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 FROM alpine:latest
 WORKDIR /root/
 COPY --from=0 /go/src/app .
+EXPOSE 80
 ENTRYPOINT ["./app"]
