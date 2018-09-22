@@ -24,7 +24,7 @@ func Collector(response http.ResponseWriter, request *http.Request) {
 	}
 
 	contentType := request.Header.Get("Content-Type")
-	if contentType != "application/json" {
+	if contentType != "application/csp-report" {
 		response.WriteHeader(http.StatusUnsupportedMediaType)
 		log.Printf("Unsupported Media Type \"%s\".\n", contentType)
 		return
