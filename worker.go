@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -46,7 +46,7 @@ func (w *Worker) Start() {
 			select {
 			case work := <-w.Work:
 				// Receive a work request.
-				fmt.Printf("Worker%d: Received work request.\n", w.ID)
+				log.Printf("Worker%d: Received work request.\n", w.ID)
 				w.CurrentWork = append(w.CurrentWork, work)
 				if w.TimeoutStarted == false {
 					time.AfterFunc(w.Timeout, w.Flush)
@@ -55,7 +55,7 @@ func (w *Worker) Start() {
 
 			case <-w.QuitChan:
 				// We have been asked to stop.
-				fmt.Printf("Worker%d stopping.\n", w.ID)
+				log.Printf("Worker%d stopping.\n", w.ID)
 				return
 			}
 		}
@@ -71,9 +71,7 @@ func (w *Worker) Stop() {
 }
 
 func (w *Worker) Flush() {
-	fmt.Println("Flush")
-	for _, work := range w.CurrentWork {
-		w.Logger.Log(work)
-	}
+	log.Println("Flush")
+	w.Logger.Log(w.CurrentWork)
 	w.TimeoutStarted = false
 }

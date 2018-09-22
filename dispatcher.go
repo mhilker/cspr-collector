@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"log"
+)
 
 var WorkerQueue chan chan CSPRequest
 
@@ -10,7 +12,7 @@ func StartDispatcher(nworkers int, logger Logger) {
 
 	// Now, create all of our workers.
 	for i := 0; i < nworkers; i++ {
-		fmt.Println("Starting worker", i+1)
+		log.Println("Starting worker", i+1)
 		worker := NewWorker(i+1, WorkerQueue, logger)
 		worker.Start()
 	}
@@ -19,11 +21,11 @@ func StartDispatcher(nworkers int, logger Logger) {
 		for {
 			select {
 			case work := <-WorkQueue:
-				fmt.Println("Received work requeust")
+				log.Println("Received work requeust")
 				go func() {
 					worker := <-WorkerQueue
 
-					fmt.Println("Dispatching work request")
+					log.Println("Dispatching work request")
 					worker <- work
 				}()
 			}
