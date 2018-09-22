@@ -11,7 +11,7 @@ var (
 	HTTPListenHost    = flag.String("host", "127.0.0.1:8080", "address to listen for http requests on")
 	OutputStdout      = flag.Bool("output-stdout", true, "enable stdout output")
 	OutputHTTPEnabled = flag.Bool("output-http", false, "enable http output")
-	OutputHTTPHost    = flag.String("output-http-host", "http://localhost:9200/csp-violations/_doc", "http host to send the csp violations to")
+	OutputHTTPHost    = flag.String("output-http-host", "http://localhost:80/", "http host to send the csp violations to")
 	OutputESEnabled   = flag.Bool("output-es", false, "enable elasticsearch output")
 	OutputESHost      = flag.String("output-es-host", "http://localhost:9200/", "elasticsearch host to send the csp violations to")
 )
