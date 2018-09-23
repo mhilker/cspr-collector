@@ -13,6 +13,8 @@ Usage of ./bin/csp-collector:
         enable elasticsearch output
   -output-es-host string
         elasticsearch host to send the csp violations to (default "http://localhost:9200/")
+  -output-es-index string
+        elasticsearch index to save the csp violations in (default "csp-violations")
   -output-http
         enable http output
   -output-http-host string
