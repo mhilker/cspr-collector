@@ -14,34 +14,39 @@ var (
 	OutputHTTPHost    = flag.String("output-http-host", "http://localhost:80/", "http host to send the csp violations to")
 	OutputESEnabled   = flag.Bool("output-es", false, "enable elasticsearch output")
 	OutputESHost      = flag.String("output-es-host", "http://localhost:9200/", "elasticsearch host to send the csp violations to")
+	OutputESIndex     = flag.String("output-es-index", "csp-violations", "elasticsearch index to save the csp violations in")
 )
 
 func main() {
 	// Parse the command-line flags.
 	flag.Parse()
 
-	loggers := []Logger{}
+	outputs := []Output{}
 
 	if *OutputStdout {
-		log.Printf("Enable Stdout Logger.")
-		loggers = append(loggers, &StdoutLogger{})
+		log.Printf("Enable Stdout Output.")
+		outputs = append(outputs, &StdoutOutput{})
 	}
 	if *OutputHTTPEnabled {
-		log.Printf("Enable HTTP Logger.")
-		loggers = append(loggers, &HTTPLogger{Url: *OutputHTTPHost})
+		log.Printf("Enable HTTP Output.")
+		outputs = append(outputs, &HTTPOutput{Url: *OutputHTTPHost})
 	}
 	if *OutputESEnabled {
-		log.Printf("Enable ES Logger.")
-		loggers = append(loggers, &ElasticsearchLogger{Url: *OutputESHost})
+		log.Printf("Enable ES Output.")
+		outputs = append(outputs, &ElasticsearchOutput{
+			Url:   *OutputESHost,
+			Index: *OutputESIndex,
+		})
 	}
 
-	logger := &CombinedLogger{Loggers: loggers}
+	output := &CombinedOutput{Outputs: outputs}
 
-	StartDispatcher(*NWorkers, logger)
+	StartDispatcher(*NWorkers, output)
 	http.HandleFunc("/", Collector)
 
 	log.Printf("HTTP server listening on %s.", *HTTPListenHost)
-	if err := http.ListenAndServe(*HTTPListenHost, nil); err != nil {
+	err := http.ListenAndServe(*HTTPListenHost, nil)
+	if err != nil {
 		log.Print(err.Error())
 	}
 }

@@ -6,12 +6,12 @@ import (
 
 var WorkerQueue chan chan CSPRequest
 
-func StartDispatcher(nworkers int, logger Logger) {
+func StartDispatcher(nworkers int, output Output) {
 	WorkerQueue = make(chan chan CSPRequest, nworkers)
 
 	for i := 0; i < nworkers; i++ {
 		log.Printf("Starting worker #%d.", i+1)
-		worker := NewWorker(i+1, WorkerQueue, logger)
+		worker := NewWorker(i+1, WorkerQueue, output)
 		worker.Start()
 	}
 

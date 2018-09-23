@@ -7,11 +7,11 @@ import (
 	"net/http"
 )
 
-type HTTPLogger struct {
+type HTTPOutput struct {
 	Url string
 }
 
-func (l *HTTPLogger) Log(data []CSPRequest) {
+func (o *HTTPOutput) Write(data []CSPRequest) {
 	for _, d := range data {
 		jsn, err := json.Marshal(d.Report)
 		if err != nil {
@@ -19,7 +19,7 @@ func (l *HTTPLogger) Log(data []CSPRequest) {
 			return
 		}
 
-		request, err := http.NewRequest("POST", l.Url, bytes.NewBuffer(jsn))
+		request, err := http.NewRequest("POST", o.Url, bytes.NewBuffer(jsn))
 		if err != nil {
 			log.Print(err.Error())
 			return

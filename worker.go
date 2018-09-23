@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-func NewWorker(id int, workerQueue chan chan CSPRequest, logger Logger) Worker {
+func NewWorker(id int, workerQueue chan chan CSPRequest, output Output) Worker {
 	worker := Worker{
 		ID:             id,
 		Work:           make(chan CSPRequest),
 		WorkerQueue:    workerQueue,
 		QuitChan:       make(chan bool),
-		Logger:         logger,
+		Output:         output,
 		CurrentWork:    make([]CSPRequest, 0),
 		TimeoutStarted: false,
 		Timeout:        time.Duration(5) * time.Second,
@@ -25,7 +25,7 @@ type Worker struct {
 	Work           chan CSPRequest
 	WorkerQueue    chan chan CSPRequest
 	QuitChan       chan bool
-	Logger         Logger
+	Output         Output
 	CurrentWork    []CSPRequest
 	TimeoutStarted bool
 	Timeout        time.Duration
@@ -62,6 +62,6 @@ func (w *Worker) Stop() {
 
 func (w *Worker) Flush() {
 	log.Printf("Flush %d entries.", len(w.CurrentWork))
-	w.Logger.Log(w.CurrentWork)
+	w.Output.Write(w.CurrentWork)
 	w.TimeoutStarted = false
 }
