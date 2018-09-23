@@ -23,31 +23,25 @@ func main() {
 	loggers := []Logger{}
 
 	if *OutputStdout {
-		log.Printf("Enable Stdout Logger")
+		log.Printf("Enable Stdout Logger.")
 		loggers = append(loggers, &StdoutLogger{})
 	}
 	if *OutputHTTPEnabled {
-		log.Printf("Enable HTTP Logger")
+		log.Printf("Enable HTTP Logger.")
 		loggers = append(loggers, &HTTPLogger{Url: *OutputHTTPHost})
 	}
 	if *OutputESEnabled {
-		log.Printf("Enable ES Logger")
+		log.Printf("Enable ES Logger.")
 		loggers = append(loggers, &ElasticsearchLogger{Url: *OutputESHost})
 	}
 
 	logger := &CombinedLogger{Loggers: loggers}
 
-	// Start the dispatcher.
-	log.Println("Starting the dispatcher")
 	StartDispatcher(*NWorkers, logger)
-
-	// Register our collector as an HTTP handler function.
-	log.Println("Registering the collector")
 	http.HandleFunc("/", Collector)
 
-	// Start the HTTP server!
-	log.Println("HTTP server listening on", *HTTPListenHost)
+	log.Printf("HTTP server listening on %s.", *HTTPListenHost)
 	if err := http.ListenAndServe(*HTTPListenHost, nil); err != nil {
-		log.Println(err.Error())
+		log.Print(err.Error())
 	}
 }

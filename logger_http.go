@@ -15,13 +15,13 @@ func (l *HTTPLogger) Log(data []CSPRequest) {
 	for _, d := range data {
 		jsn, err := json.Marshal(d.Report)
 		if err != nil {
-			log.Println(err.Error())
+			log.Print(err.Error())
 			return
 		}
 
-		request, err2 := http.NewRequest("POST", l.Url, bytes.NewBuffer(jsn))
-		if err2 != nil {
-			log.Println(err2.Error())
+		request, err := http.NewRequest("POST", l.Url, bytes.NewBuffer(jsn))
+		if err != nil {
+			log.Print(err.Error())
 			return
 		}
 		request.Header.Set("Content-Type", "application/json")
@@ -29,11 +29,11 @@ func (l *HTTPLogger) Log(data []CSPRequest) {
 		client := &http.Client{}
 		response, err := client.Do(request)
 		if err != nil {
-			log.Println(err.Error())
+			log.Print(err.Error())
 			return
 		}
-		defer response.Body.Close()
 
-		log.Println("Response Status:", response.Status)
+		defer response.Body.Close()
+		log.Print("Response Status:", response.Status)
 	}
 }

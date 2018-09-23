@@ -10,6 +10,6 @@ type StdoutLogger struct{}
 func (l *StdoutLogger) Log(data []CSPRequest) {
 	for _, d := range data {
 		b, _ := json.MarshalIndent(d, "", "    ")
-		log.Println(string(b))
+		log.Print(string(b))
 	}
 }

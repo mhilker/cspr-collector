@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -9,45 +10,60 @@ import (
 
 var WorkQueue = make(chan CSPRequest, 100)
 
-func Collector(response http.ResponseWriter, request *http.Request) {
-	if request.RequestURI != "/" {
-		response.WriteHeader(http.StatusNotFound)
-		log.Printf("Path \"%s\" not found.\n", request.RequestURI)
+func Collector(w http.ResponseWriter, r *http.Request) {
+	if r.RequestURI != "/" {
+		message := fmt.Sprintf("Path \"%s\" not found.", r.RequestURI)
+		response(w, http.StatusNotFound, message)
 		return
 	}
 
-	if request.Method != "POST" {
-		response.Header().Set("Allow", "POST")
-		response.WriteHeader(http.StatusMethodNotAllowed)
-		log.Printf("Method \"%s\" not allowed.\n", request.Method)
+	if r.Method != "POST" {
+		w.Header().Set("Allow", "POST")
+		message := fmt.Sprintf("Method \"%s\" not allowed.", r.Method)
+		response(w, http.StatusMethodNotAllowed, message)
 		return
 	}
 
-	contentType := request.Header.Get("Content-Type")
+	contentType := r.Header.Get("Content-Type")
 	if contentType != "application/csp-report" {
-		response.WriteHeader(http.StatusUnsupportedMediaType)
-		log.Printf("Unsupported Media Type \"%s\".\n", contentType)
+		w.WriteHeader(http.StatusUnsupportedMediaType)
+		message := fmt.Sprintf("Unsupported Media Type \"%s\".", contentType)
+		response(w, http.StatusUnsupportedMediaType, message)
 		return
 	}
 
-	body, err1 := ioutil.ReadAll(request.Body)
-	if err1 != nil {
-		response.WriteHeader(http.StatusInternalServerError)
-		log.Println(err1.Error())
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		message := err.Error()
+		response(w, http.StatusInternalServerError, message)
 		return
 	}
 
 	data := NewCSPRequest()
-	err2 := json.Unmarshal(body, &data)
-	if err2 != nil {
-		response.WriteHeader(http.StatusBadRequest)
-		log.Println(err1.Error())
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		message := err.Error()
+		response(w, http.StatusBadRequest, message)
 		return
 	}
 
 	WorkQueue <- data
-	log.Println("CSPRequest queued.")
 
-	response.WriteHeader(http.StatusCreated)
+	message := "Thanks for reporting."
+	response(w, http.StatusCreated, message)
 	return
+}
+
+func response(w http.ResponseWriter, status int, message string) {
+	log.Print(message)
+
+	d := map[string]string{
+		"message": message,
+	}
+
+	j, _ := json.MarshalIndent(d, "", "    ")
+
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(status)
+	w.Write(j)
 }
