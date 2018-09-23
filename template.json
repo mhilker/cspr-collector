@@ -1,6 +1,6 @@
 {
   "index_patterns": [
-    "csp-reports"
+    "csp-violations"
   ],
   "settings": {
     "number_of_shards": 1,
