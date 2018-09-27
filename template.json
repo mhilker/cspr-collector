@@ -1,5 +1,6 @@
 {
   "index_patterns": [
+    "csp-violations-*",
     "csp-violations"
   ],
   "settings": {

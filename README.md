@@ -2,7 +2,7 @@
 
 ## Synopsis
 
-```
+```bash
 $ ./bin/csp-collector --help
 Usage of ./bin/csp-collector:
   -host string

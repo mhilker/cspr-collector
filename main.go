@@ -18,10 +18,9 @@ var (
 )
 
 func main() {
-	// Parse the command-line flags.
 	flag.Parse()
 
-	outputs := []Output{}
+	var outputs []Output
 
 	if *OutputStdout {
 		log.Printf("Enable Stdout Output.")
