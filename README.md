@@ -60,3 +60,7 @@ $ docker build . -t mhilker/csp-collector:latest
 ```bash
 $ docker push mhilker/csp-collector:latest
 ```
+
+## License
+
+The MIT License (MIT). Please see the [license file](LICENSE.md) for more information.
