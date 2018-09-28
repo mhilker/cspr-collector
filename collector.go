@@ -18,7 +18,7 @@ type Collector struct {
 	WorkQueue chan<- CSPRequest
 }
 
-func (c *Collector) Run(w http.ResponseWriter, r *http.Request) {
+func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.RequestURI != "/" {
 		message := fmt.Sprintf("Path \"%s\" not found.", r.RequestURI)
 		c.response(w, http.StatusNotFound, message)
