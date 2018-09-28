@@ -6,18 +6,17 @@ import (
 	"net/http"
 )
 
-var (
-	NWorkers          = flag.Int("n", 4, "the number of workers to start")
-	HTTPListenHost    = flag.String("host", "127.0.0.1:8080", "address to listen for http requests on")
-	OutputStdout      = flag.Bool("output-stdout", true, "enable stdout output")
-	OutputHTTPEnabled = flag.Bool("output-http", false, "enable http output")
-	OutputHTTPHost    = flag.String("output-http-host", "http://localhost:80/", "http host to send the csp violations to")
-	OutputESEnabled   = flag.Bool("output-es", false, "enable elasticsearch output")
-	OutputESHost      = flag.String("output-es-host", "http://localhost:9200/", "elasticsearch host to send the csp violations to")
-	OutputESIndex     = flag.String("output-es-index", "csp-violations", "elasticsearch index to save the csp violations in")
-)
-
 func main() {
+	var (
+		NumberOfWorkers   = flag.Int("n", 4, "the number of workers to start")
+		HTTPListenHost    = flag.String("host", "127.0.0.1:8080", "address to listen for http requests on")
+		OutputStdout      = flag.Bool("output-stdout", false, "enable stdout output")
+		OutputHTTPEnabled = flag.Bool("output-http", false, "enable http output")
+		OutputHTTPHost    = flag.String("output-http-host", "http://localhost:80/", "http host to send the csp violations to")
+		OutputESEnabled   = flag.Bool("output-es", false, "enable elasticsearch output")
+		OutputESHost      = flag.String("output-es-host", "http://localhost:9200/", "elasticsearch host to send the csp violations to")
+		OutputESIndex     = flag.String("output-es-index", "csp-violations", "elasticsearch index to save the csp violations in")
+	)
 	flag.Parse()
 
 	var outputs []Output
@@ -40,8 +39,13 @@ func main() {
 
 	output := &CombinedOutput{Outputs: outputs}
 
-	StartDispatcher(*NWorkers, output)
-	http.HandleFunc("/", Collector)
+	workQueue := make(chan CSPRequest, 100)
+
+	dispatcher := NewDispatcher(*NumberOfWorkers, output, workQueue)
+	dispatcher.Run()
+
+	collector := NewCollector(workQueue)
+	http.HandleFunc("/", collector.Run)
 
 	log.Printf("HTTP server listening on %s.", *HTTPListenHost)
 	err := http.ListenAndServe(*HTTPListenHost, nil)

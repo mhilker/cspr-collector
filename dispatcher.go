@@ -4,29 +4,42 @@ import (
 	"log"
 )
 
-var WorkerQueue chan chan CSPRequest
+func NewDispatcher(nworkers int, output Output, workQueue <-chan CSPRequest) *Dispatcher {
+	return &Dispatcher{
+		WorkerQueue:     make(chan chan CSPRequest, nworkers),
+		WorkQueue:       workQueue,
+		NumberOfWorkers: nworkers,
+		Output:          output,
+	}
+}
 
-func StartDispatcher(nworkers int, output Output) {
-	WorkerQueue = make(chan chan CSPRequest, nworkers)
+type Dispatcher struct {
+	WorkerQueue     chan chan CSPRequest
+	WorkQueue       <-chan CSPRequest
+	NumberOfWorkers int
+	Output          Output
+}
 
-	for i := 0; i < nworkers; i++ {
+func (d *Dispatcher) Run() {
+	for i := 0; i < d.NumberOfWorkers; i++ {
 		log.Printf("Starting worker #%d.", i+1)
-		worker := NewWorker(i+1, WorkerQueue, output)
+		worker := NewWorker(i+1, d.WorkerQueue, d.Output)
 		worker.Start()
 	}
 
-	go func() {
-		for {
-			select {
-			case work := <-WorkQueue:
-				log.Print("Received work request.")
-				go func() {
-					worker := <-WorkerQueue
+	go d.start()
+}
 
-					log.Print("Dispatching work request.")
-					worker <- work
-				}()
-			}
+func (d *Dispatcher) start() {
+	for {
+		select {
+		case work := <-d.WorkQueue:
+			log.Print("Received work request.")
+			go func() {
+				worker := <-d.WorkerQueue
+				log.Print("Dispatching work request.")
+				worker <- work
+			}()
 		}
-	}()
+	}
 }

@@ -15,10 +15,6 @@ type CSPReport struct {
 	Occurred           time.Time `json:"occurred"`
 }
 
-type CSPRequest struct {
-	Report CSPReport `json:"csp-report"`
-}
-
 func NewCSPRequest() CSPRequest {
 	report := CSPRequest{
 		Report: CSPReport{
@@ -27,4 +23,8 @@ func NewCSPRequest() CSPRequest {
 	}
 
 	return report
+}
+
+type CSPRequest struct {
+	Report CSPReport `json:"csp-report"`
 }
