@@ -29,7 +29,16 @@ func (o *ElasticsearchOutput) Write(data []CSPRequest) {
 		return
 	}
 
-	if res.Errors {
-		log.Print("Bulk errors.")
+	if !res.Errors {
+		return
+	}
+
+	log.Print("Bulk errors.")
+	for _, items := range res.Items {
+		for _, i := range items {
+			if i.Error != nil {
+				log.Print(i.Error.Reason)
+			}
+		}
 	}
 }
