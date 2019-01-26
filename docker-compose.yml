@@ -7,7 +7,10 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+    command: --host 0.0.0.0:8080
     image: mhilker/cspr-collector
+    ports:
+      - 8080:8080
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.4.0
