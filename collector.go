@@ -73,5 +73,9 @@ func (c *Collector) response(w http.ResponseWriter, status int, message string) 
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(status)
-	w.Write(j)
+
+	_, err := w.Write(j)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
