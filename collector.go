@@ -57,12 +57,18 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	c.WorkQueue <- data
 
-	message := "Thanks for reporting."
-	c.response(w, http.StatusCreated, message)
+	c.response(w, http.StatusCreated, "")
 	return
 }
 
 func (c *Collector) response(w http.ResponseWriter, status int, message string) {
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(status)
+
+	if message == "" {
+		return
+	}
+
 	log.Print(message)
 
 	m := map[string]string{
@@ -70,9 +76,6 @@ func (c *Collector) response(w http.ResponseWriter, status int, message string) 
 	}
 
 	j, _ := json.MarshalIndent(m, "", "    ")
-
-	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(status)
 
 	_, err := w.Write(j)
 	if err != nil {
