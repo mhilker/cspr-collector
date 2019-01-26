@@ -1,10 +1,10 @@
-# CSP Collector
+# CSPR Collector
 
 ## Synopsis
 
 ```bash
-$ ./bin/csp-collector --help
-Usage of ./bin/csp-collector:
+$ ./bin/cspr-collector --help
+Usage of ./bin/cspr-collector:
   -host string
         address to listen for http requests on (default "127.0.0.1:8080")
   -n int
@@ -26,7 +26,7 @@ Usage of ./bin/csp-collector:
 ## Installation
 
 ```bash
-$ go install github.com/mhilker/csp-collector && ./bin/csp-collector
+$ go install github.com/mhilker/cspr-collector && ./bin/cspr-collector
 ```
 
 ## Dependencies
@@ -44,7 +44,7 @@ A mapping template is included in the `template.json` file.
 ## Code Style
 
 ```bash
-$ go fmt github.com/mhilker/csp-collector
+$ go fmt github.com/mhilker/cspr-collector
 ```
 
 ## Build via docker
@@ -52,13 +52,13 @@ $ go fmt github.com/mhilker/csp-collector
 ### Build
 
 ```bash
-$ docker build . -t mhilker/csp-collector:latest
+$ docker build . -t mhilker/cspr-collector:latest
 ```
 
 ### Push
 
 ```bash
-$ docker push mhilker/csp-collector:latest
+$ docker push mhilker/cspr-collector:latest
 ```
 
 ## License
