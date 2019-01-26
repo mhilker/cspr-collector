@@ -45,7 +45,11 @@ func main() {
 	<-stop
 
 	log.Print("Shutting down the server.")
-	server.Shutdown(context.Background())
+	err := server.Shutdown(context.Background())
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	log.Println("Server gracefully stopped.")
 }
 
