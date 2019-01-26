@@ -17,7 +17,7 @@ var (
 	OutputHTTPHost    = flag.String("output-http-host", "http://localhost:80/", "http host to send the csp violations to")
 	OutputESEnabled   = flag.Bool("output-es", false, "enable elasticsearch output")
 	OutputESHost      = flag.String("output-es-host", "http://localhost:9200/", "elasticsearch host to send the csp violations to")
-	OutputESIndex     = flag.String("output-es-index", "csp-violations", "elasticsearch index to save the csp violations in")
+	OutputESIndex     = flag.String("output-es-index", "cspr-violations", "elasticsearch index to save the csp violations in")
 )
 
 func main() {
