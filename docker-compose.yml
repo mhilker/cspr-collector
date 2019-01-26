@@ -3,6 +3,12 @@ version: '3'
 
 services:
 
+  cspr-collector:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: mhilker/cspr-collector
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.4.0
     ports:
