@@ -62,7 +62,6 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Collector) response(w http.ResponseWriter, status int, message string) {
-	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(status)
 
 	if message == "" {
@@ -77,6 +76,7 @@ func (c *Collector) response(w http.ResponseWriter, status int, message string) 
 
 	j, _ := json.MarshalIndent(m, "", "    ")
 
+	w.Header().Set("content-type", "application/json")
 	_, err := w.Write(j)
 	if err != nil {
 		log.Fatal(err)
