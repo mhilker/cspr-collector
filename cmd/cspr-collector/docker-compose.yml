@@ -4,11 +4,11 @@ version: '3'
 services:
 
   cspr-collector:
+    image: mhilker/cspr-collector:latest
     build:
       context: ../..
       dockerfile: cmd/cspr-collector/Dockerfile
     command: --host 0.0.0.0:8080 -output-stdout -output-es -output-es-host "http://elasticsearch:9200/"
-    image: mhilker/cspr-collector:latest
     ports:
       - 8080:8080
 
