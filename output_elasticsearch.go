@@ -2,7 +2,7 @@ package csprcollector
 
 import (
 	"context"
-	"github.com/olivere/elastic"
+	"github.com/olivere/elastic/v7"
 	"log"
 )
 
@@ -18,7 +18,7 @@ func (o *ElasticsearchOutput) Write(data []CSPRequest) {
 		return
 	}
 
-	bulk := client.Bulk().Index(o.Index).Type("_doc")
+	bulk := client.Bulk().Index(o.Index)
 	for _, d := range data {
 		bulk.Add(elastic.NewBulkIndexRequest().Doc(d.Report))
 	}

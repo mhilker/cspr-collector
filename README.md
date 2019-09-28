@@ -1,9 +1,11 @@
 # CSPR Collector
 
+Content Security Policy Report Collector.
+
 ## Synopsis
 
 ```bash
-$ ./bin/cspr-collector --help
+$ ./cspr-collector --help
 Usage of ./bin/cspr-collector:
   -host string
         address to listen for http requests on (default "127.0.0.1:8080")
@@ -23,17 +25,53 @@ Usage of ./bin/cspr-collector:
         enable stdout output (default true)
 ```
 
-## Installation
+## Build and run
+
+### On your machine
 
 ```bash
-$ go install github.com/mhilker/cspr-collector && ./bin/cspr-collector
+$ go build -o cspr-collector ./cmd/cspr-collector/main.go
+$ ./cspr-collector -host 0.0.0.0:8080 -output-stdout
 ```
 
-## Dependencies
+### Via docker
 
 ```bash
-$ dep ensure
+$ docker build -t mhilker/cspr-collector:latest -f cmd/cspr-collector/Dockerfile .
+$ docker run -p 8080:8080 mhilker/cspr-collector:latest -host 0.0.0.0:8080 -output-stdout
 ```
+
+### Via docker-compose
+
+```bash
+$ docker-compose -f cmd/cspr-collector/docker-compose.yml build
+$ docker-compose -f cmd/cspr-collector/docker-compose.yml up
+```
+
+## Example request
+
+```
+curl -X POST \
+  http://localhost:8080 \
+  -H 'Content-Type: application/csp-report' \
+  -d '{
+    "csp-report": {
+        "document-uri": "https://example.com/path/to/file",
+        "referrer": "",
+        "violated-directive": "script-src-elem",
+        "effective-directive": "script-src-elem",
+        "original-policy": "default-src '\''self'\''; img-src '\''self'\'' https://*.ytimg.com; script-src-elem '\''self'\'' https://storage.googleapis.com https://www.youtube.com; connect-src '\''self'\'' https://www.googleapis.com; frame-src '\''self'\'' https://www.youtube.com; base-uri '\''self'\''; frame-ancestors '\''none'\''; form-action '\''self'\''; block-all-mixed-content; report-uri https://reporting.example.com/;",
+        "disposition": "report",
+        "blocked-uri": "https://www.youtube.com/iframe_api",
+        "line-number": 1,
+        "column-number": 7982,
+        "source-file": "://example.com/static/js/7.74a7cce6.chunk.js",
+        "status-code": 0,
+        "script-sample": ""
+    }
+}'
+```
+
 ## Requirements
 
 ### Elasticsearch Output
@@ -41,24 +79,17 @@ $ dep ensure
 The elasticsearch output requires an elasticsearch index called `csp-violations` with a doc-type `_doc`.
 A mapping template is included in the `template.json` file.
 
+```
+curl -X POST \
+    --header "Content-Type: application/json" \
+    --data-binary @template.json \
+    http://localhost:9200/_template/cspr-violations
+```
+
 ## Code Style
 
 ```bash
 $ go fmt .
-```
-
-## Build via docker
-
-### Build
-
-```bash
-$ docker build . -t mhilker/cspr-collector:latest
-```
-
-### Push
-
-```bash
-$ docker push mhilker/cspr-collector:latest
 ```
 
 ## License

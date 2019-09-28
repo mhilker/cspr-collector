@@ -5,15 +5,15 @@ services:
 
   cspr-collector:
     build:
-      context: .
-      dockerfile: Dockerfile
-    command: --host 0.0.0.0:8080 -output-es-host "http://elasticsearch:9200/"
-    image: mhilker/cspr-collector
+      context: ../..
+      dockerfile: cmd/cspr-collector/Dockerfile
+    command: --host 0.0.0.0:8080 -output-stdout -output-es -output-es-host "http://elasticsearch:9200/"
+    image: mhilker/cspr-collector:latest
     ports:
       - 8080:8080
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.4.0
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.3.2
     ports:
       - 9200:9200
     environment:
@@ -23,7 +23,7 @@ services:
       discovery.type: "single-node"
 
   kibana:
-    image: docker.elastic.co/kibana/kibana-oss:6.4.0
+    image: docker.elastic.co/kibana/kibana-oss:7.3.2
     ports:
       - 5601:5601
     environment:
