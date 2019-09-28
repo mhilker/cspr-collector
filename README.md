@@ -30,8 +30,8 @@ Usage of ./bin/cspr-collector:
 ### On your machine
 
 ```bash
-$ go build -o cspr-collector ./cmd/cspr-collector/main.go
-$ ./cspr-collector -host 0.0.0.0:8080 -output-stdout
+$ go build -o build/cspr-collector ./cmd/cspr-collector/main.go
+$ ./build/cspr-collector -host 0.0.0.0:8080 -output-stdout
 ```
 
 ### Via docker
