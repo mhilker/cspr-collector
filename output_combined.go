@@ -1,4 +1,4 @@
-package main
+package csprcollector
 
 type CombinedOutput struct {
 	Outputs []Output

@@ -1,4 +1,4 @@
-package main
+package csprcollector
 
 import (
 	"encoding/json"
@@ -25,7 +25,7 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", "POST")
 		message := fmt.Sprintf("Method \"%s\" not allowed.", r.Method)
 		c.response(w, http.StatusMethodNotAllowed, message)

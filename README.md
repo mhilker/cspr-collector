@@ -44,7 +44,7 @@ A mapping template is included in the `template.json` file.
 ## Code Style
 
 ```bash
-$ go fmt github.com/mhilker/cspr-collector
+$ go fmt .
 ```
 
 ## Build via docker
