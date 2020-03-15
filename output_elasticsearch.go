@@ -4,15 +4,17 @@ import (
 	"context"
 	"github.com/olivere/elastic/v7"
 	"log"
+	"net/http"
 )
 
 type ElasticsearchOutput struct {
-	Url   string
-	Index string
+	Url    string
+	Index  string
+	Client *http.Client
 }
 
 func (o *ElasticsearchOutput) Write(data []CSPRequest) {
-	client, err := elastic.NewClient(elastic.SetURL(o.Url), elastic.SetSniff(false))
+	client, err := elastic.NewClient(elastic.SetHttpClient(o.Client), elastic.SetURL(o.Url), elastic.SetSniff(false))
 	if err != nil {
 		log.Print(err.Error())
 		return

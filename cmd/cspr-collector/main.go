@@ -19,6 +19,9 @@ var (
 	OutputESEnabled   = flag.Bool("output-es", false, "enable elasticsearch output")
 	OutputESHost      = flag.String("output-es-host", "http://localhost:9200/", "elasticsearch host to send the csp violations to")
 	OutputESIndex     = flag.String("output-es-index", "cspr-violations", "elasticsearch index to save the csp violations in")
+	OutputEsCertFile  = flag.String("output-es-cert-file", "", "cert file for elasticsearch")
+	OutputEsKeyFile   = flag.String("output-es-key-file", "", "key file for elasticsearch")
+	OutputEsCaFile    = flag.String("output-es-ca-file", "", "ca file for elasticsearch")
 )
 
 func main() {
@@ -70,8 +73,9 @@ func NewOutput() *cspr.CombinedOutput {
 	if *OutputESEnabled {
 		log.Printf("Enable ES Output.")
 		outputs = append(outputs, &cspr.ElasticsearchOutput{
-			Url:   *OutputESHost,
-			Index: *OutputESIndex,
+			Url:    *OutputESHost,
+			Index:  *OutputESIndex,
+			Client: cspr.NewHttpClient(*OutputEsCertFile, *OutputEsKeyFile, *OutputEsCaFile),
 		})
 	}
 

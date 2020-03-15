@@ -6,23 +6,29 @@ Content Security Policy Report Collector.
 
 ```bash
 $ ./cspr-collector --help
-Usage of ./bin/cspr-collector:
+Usage of ./build/cspr-collector:
   -host string
         address to listen for http requests on (default "127.0.0.1:8080")
   -n int
         the number of workers to start (default 4)
   -output-es
         enable elasticsearch output
+  -output-es-ca-file string
+        ca file for elasticsearch
+  -output-es-cert-file string
+        cert file for elasticsearch
   -output-es-host string
         elasticsearch host to send the csp violations to (default "http://localhost:9200/")
   -output-es-index string
-        elasticsearch index to save the csp violations in (default "csp-violations")
+        elasticsearch index to save the csp violations in (default "cspr-violations")
+  -output-es-key-file string
+        key file for elasticsearch
   -output-http
         enable http output
   -output-http-host string
         http host to send the csp violations to (default "http://localhost:80/")
   -output-stdout
-        enable stdout output (default true)
+        enable stdout output
 ```
 
 ## Build and run
@@ -30,27 +36,27 @@ Usage of ./bin/cspr-collector:
 ### On your machine
 
 ```bash
-$ go build -o build/cspr-collector ./cmd/cspr-collector/main.go
-$ ./build/cspr-collector -host 0.0.0.0:8080 -output-stdout
+go build -o build/cspr-collector ./cmd/cspr-collector/main.go
+./build/cspr-collector -host 0.0.0.0:8080 -output-stdout
 ```
 
 ### Via docker
 
 ```bash
-$ docker build -t mhilker/cspr-collector:latest -f cmd/cspr-collector/Dockerfile .
-$ docker run -p 8080:8080 mhilker/cspr-collector:latest -host 0.0.0.0:8080 -output-stdout
+docker build -t mhilker/cspr-collector:latest -f cmd/cspr-collector/Dockerfile .
+docker run -p 8080:8080 mhilker/cspr-collector:latest -host 0.0.0.0:8080 -output-stdout
 ```
 
 ### Via docker-compose
 
 ```bash
-$ docker-compose -f cmd/cspr-collector/docker-compose.yml build
-$ docker-compose -f cmd/cspr-collector/docker-compose.yml up
+docker-compose -f cmd/cspr-collector/docker-compose.yml build
+docker-compose -f cmd/cspr-collector/docker-compose.yml up
 ```
 
 ## Example request
 
-```
+```bash
 curl -X POST \
   http://localhost:8080 \
   -H 'Content-Type: application/csp-report' \
@@ -79,7 +85,7 @@ curl -X POST \
 The elasticsearch output requires an elasticsearch index called `csp-violations` with a doc-type `_doc`.
 A mapping template is included in the `template.json` file.
 
-```
+```bash
 curl -X POST \
     --header "Content-Type: application/json" \
     --data-binary @template.json \
@@ -89,7 +95,7 @@ curl -X POST \
 ## Code Style
 
 ```bash
-$ go fmt .
+go fmt ./...
 ```
 
 ## License
