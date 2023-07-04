@@ -27,6 +27,8 @@ Usage of ./build/cspr-collector:
         enable http output
   -output-http-host string
         http host to send the csp violations to (default "http://localhost:80/")
+  -output-http-headers string
+        header header key with value to send with the http request. Example "Authorization: ApiKey <APIKEY>"
   -output-stdout
         enable stdout output
 ```
