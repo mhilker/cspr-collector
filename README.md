@@ -28,8 +28,6 @@ Usage of ./build/cspr-collector:
   -output-http-host string
         http host to send the csp violations to (default "http://localhost:80/")
   -output-http-headers string
-        additional headers for HTTP output
-  -output-http-headers string
         header header key with value to send with the http request. Example "Authorization: ApiKey <APIKEY>"
   -output-stdout
         enable stdout output
@@ -100,6 +98,12 @@ curl -X POST \
 
 ```bash
 go fmt ./...
+```
+
+## Health check endpoint
+endpoint with health response "OK"
+```bash
+curl http://localhost:8080/health
 ```
 
 ## License
