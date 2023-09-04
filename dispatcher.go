@@ -31,15 +31,20 @@ func (d *Dispatcher) Run() {
 }
 
 func (d *Dispatcher) start() {
-	for {
-		select {
-		case work := <-d.WorkQueue:
-			log.Print("Received work request.")
-			go func() {
-				worker := <-d.WorkerQueue
-				log.Print("Dispatching work request.")
-				worker <- work
-			}()
-		}
+	for work := range d.WorkQueue {
+		log.Print("Received work request.")
+		go func(w interface{}) {
+			worker := <-d.WorkerQueue
+			log.Print("Dispatching work request.")
+
+			// Perform a type assertion
+			typedWork, ok := w.(CSPRequest)
+			if !ok {
+				log.Print("Invalid work request type")
+				return
+			}
+
+			worker <- typedWork
+		}(work)
 	}
 }

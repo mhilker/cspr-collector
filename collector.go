@@ -19,6 +19,11 @@ type Collector struct {
 }
 
 func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.RequestURI == "/health" {
+		c.handleHealth(w)
+		return
+	}
+
 	if r.RequestURI != "/" {
 		message := fmt.Sprintf("Path \"%s\" not found.", r.RequestURI)
 		c.response(w, http.StatusNotFound, message)
@@ -58,7 +63,6 @@ func (c *Collector) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c.WorkQueue <- data
 
 	c.response(w, http.StatusCreated, "")
-	return
 }
 
 func (c *Collector) response(w http.ResponseWriter, status int, message string) {
@@ -81,4 +85,9 @@ func (c *Collector) response(w http.ResponseWriter, status int, message string) 
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (c *Collector) handleHealth(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }

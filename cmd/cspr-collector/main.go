@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"flag"
-	cspr "github.com/mhilker/cspr-collector"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+
+	cspr "github.com/mhilker/cspr-collector"
 )
 
 var (
@@ -16,6 +17,7 @@ var (
 	OutputStdout      = flag.Bool("output-stdout", false, "enable stdout output")
 	OutputHTTPEnabled = flag.Bool("output-http", false, "enable http output")
 	OutputHTTPHost    = flag.String("output-http-host", "http://localhost:80/", "http host to send the csp violations to")
+	OutputHTTPHeaders = flag.String("output-http-headers", "", "additional headers for HTTP output")
 	OutputESEnabled   = flag.Bool("output-es", false, "enable elasticsearch output")
 	OutputESHost      = flag.String("output-es-host", "http://localhost:9200/", "elasticsearch host to send the csp violations to")
 	OutputESIndex     = flag.String("output-es-index", "cspr-violations", "elasticsearch index to save the csp violations in")
@@ -67,7 +69,12 @@ func NewOutput() *cspr.CombinedOutput {
 
 	if *OutputHTTPEnabled {
 		log.Printf("Enable HTTP Output.")
-		outputs = append(outputs, &cspr.HTTPOutput{Url: *OutputHTTPHost})
+		headers := cspr.ParseHeaders(*OutputHTTPHeaders)
+
+		outputs = append(outputs, &cspr.HTTPOutput{
+			Url:     *OutputHTTPHost,
+			Headers: headers,
+		})
 	}
 
 	if *OutputESEnabled {
